@@ -28,44 +28,53 @@ var DeadCell = React.createClass({
 
 var GameBoard = React.createClass({
 	getInitialState: function() {
-		return {board: [[0, 1, 0], [0, 1, 0], [0, 1, 0]]}
+		return {board: this.makeRandomArray(10, 10)}
 	},
 	toggleCellStatus: function(x, y) {
 		var board = this.state.board;
 		board[y][x] = board[y][x] ? 0 : 1;
 		this.setState({board: board})
 	},
-	clearBoard: function() {
-		function createArray(H, W) {
-			var arr = [];
-			if(H > 1) {
-				for(var i = 0; i < H; i++) {
-					arr.push(createArray(1, W));
-				};
-			} else {
-				for(var j = 0; j < W; j++) {
-					arr.push(0);
-				}
+	getLivingNeighbors: function() {
+
+	},
+	getNextBoard: function() {
+
+	},
+	updateBoard: function() {
+
+	},
+	makeEmptyArray: function(H, W) {
+		var arr = [];
+		if(H > 1) {
+			for(var i = 0; i < H; i++) {
+				arr.push(this.makeEmptyArray(1, W));
+			};
+		} else {
+			for(var j = 0; j < W; j++) {
+				arr.push(0);
 			}
-			return arr;
-		};
-		this.setState({board: createArray(10, 10)})
+		}
+		return arr;
+	},
+	clearBoard: function() {
+		this.setState({board: this.makeEmptyArray(10, 10)})
+	},
+	makeRandomArray: function (H, W) {
+		var arr = [];
+		if(H > 1) {
+			for(var i = 0; i < H; i++) {
+				arr.push(this.makeRandomArray(1, W));
+			};
+		} else {
+			for(var j = 0; j < W; j++) {
+				arr.push(Math.floor(Math.random()*2));
+			}
+		}
+		return arr;
 	},
 	randomizeBoard: function() {
-		function createArrayRandom(H, W) {
-			var arr = [];
-			if(H > 1) {
-				for(var i = 0; i < H; i++) {
-					arr.push(createArrayRandom(1, W));
-				};
-			} else {
-				for(var j = 0; j < W; j++) {
-					arr.push(Math.floor(Math.random()*2));
-				}
-			}
-			return arr;
-		};
-		this.setState({board: createArrayRandom(10, 10)})
+		this.setState({board: this.makeRandomArray(10, 10)})
 	},
 	render: function() {
 		return (
