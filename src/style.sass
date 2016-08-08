@@ -13,13 +13,23 @@ html, body
 		.gameboard
 			height: 20em
 			width: 30em
+			display: flex
+			flex-direction: column
 
-			.cell1, .cell0 
-				height: 1em
-				width: 1em
+			.button
+				background-color: lightblue
+				cursor: pointer
 
-			.cell1
-				background-color: black
+			.row
+				display: flex
 
-			.cell0
-				background-color: white
+				.dead-cell, .living-cell
+					height: 1em
+					width: 1em
+					border: 0.1em solid #555
+
+				.living-cell
+					background-color: black
+
+				.dead-cell
+					background-color: white
