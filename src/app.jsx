@@ -35,14 +35,76 @@ var GameBoard = React.createClass({
 		board[y][x] = board[y][x] ? 0 : 1;
 		this.setState({board: board})
 	},
-	getLivingNeighbors: function() {
+	getLivingNeighbors: function(board) {
+		var height = board.length;
+		var width = board[0].length;
+		var neighborBoard = this.makeEmptyArray(height, width);
 
+		for(var i = 0; i < height; i++) {
+			for(var j = 0; j < width; j++) {
+				// if the cell is alive
+				if(board[i][j]) {
+					if(i > 0) {
+						neighborBoard[i-1][j]++;
+						if(j > 0) {
+							neighborBoard[i-1][j-1]++;
+						}
+						if(j < width-1) {
+							neighborBoard[i-1][j+1]++
+						}
+					}
+					if(i < height-1) {
+						neighborBoard[i+1][j]++;
+						if(j > 0) {
+							neighborBoard[i+1][j-1]++;
+						}
+						if(j < width-1) {
+							neighborBoard[i+1][j+1]++
+						}
+					}
+					if(j > 0) {
+						neighborBoard[i][j-1]++;
+					}
+					if(j < width-1) {
+						neighborBoard[i][j+1]++;
+					}
+				}
+			}
+		}
+		return neighborBoard;
 	},
-	getNextBoard: function() {
+	getCellFate: function(cell, neighbors) {
+		if(cell) {
+			if(neighbors < 2) {
+				return 0;
+			} else if (neighbors > 3) {
+				return 0;
+			} else {
+				return 1;
+			}
+		} else {
+			if(neighbors === 3) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	},
+	getNextBoard: function(oldBoard, neighborBoard) {
+		var height = oldBoard.length;
+		var width = oldBoard[0].length;
+		var nextBoard = this.makeEmptyArray(height, width);
 
+		for(var i = 0; i < height; i++) {
+			for(var j = 0; j < width; j++) {
+				nextBoard[i][j] = this.getCellFate(oldBoard[i][j], neighborBoard[i][j])
+			}
+		}
+
+		return nextBoard;
 	},
 	updateBoard: function() {
-
+		this.setState({board: this.getNextBoard(this.state.board, this.getLivingNeighbors(this.state.board))})
 	},
 	makeEmptyArray: function(H, W) {
 		var arr = [];
@@ -94,6 +156,7 @@ var GameBoard = React.createClass({
 				}
 				<div onClick={this.randomizeBoard} className='button'>Randomize</div>
 				<div onClick={this.clearBoard} className='button'>Clear</div>
+				<div onClick={this.updateBoard} className='button'>Next</div>
 			</div>
 		)
 	}
