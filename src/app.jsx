@@ -3,9 +3,8 @@ import ReactDOM from 'react-dom';
 import './style.sass';
 
 var LivingCell = React.createClass({
-	sayPosition: function() {
-		console.log(this.props.x)
-		console.log(this.props.y)
+	changeStatus: function() {
+		this.props.toggleCellStatus(this.props.x, this.props.y);
 	},
 	render: function() {
 		return (
@@ -15,13 +14,12 @@ var LivingCell = React.createClass({
 });
 
 var DeadCell = React.createClass({
-	sayPosition: function() {
-		console.log(this.props.x)
-		console.log(this.props.y)
+	changeStatus: function() {
+		this.props.toggleCellStatus(this.props.x, this.props.y);
 	},
 	render: function() {
 		return (
-			<div className={'dead-cell'}></div>
+			<div onClick={this.changeStatus} className={'dead-cell'}></div>
 		)
 	}
 });
@@ -173,13 +171,13 @@ var GameBoard = React.createClass({
 						return (
 							<div className='row' key={i}>{subarray.map(function(item, j) {
 								if(item) {
-									return <LivingCell key={j} x={j} y={i} />
+									return <LivingCell toggleCellStatus={this.toggleCellStatus} key={j} x={j} y={i} />
 								} else {
-									return <DeadCell key={j} x={j} y={i} />
+									return <DeadCell  toggleCellStatus={this.toggleCellStatus} key={j} x={j} y={i} />
 								}
-							})}</div>
+							}, this)}</div>
 						)
-					})
+					}, this)
 				}
 				<div onClick={this.randomizeBoard} className='button'>Randomize</div>
 				<div onClick={this.clearBoard} className='button'>Clear</div>
