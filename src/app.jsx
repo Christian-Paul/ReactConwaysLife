@@ -28,7 +28,10 @@ var DeadCell = React.createClass({
 
 var GameBoard = React.createClass({
 	getInitialState: function() {
-		return {board: this.makeRandomArray(10, 10)}
+		return {board: this.makeRandomArray(10, 10), generation: 0}
+	},
+	componentDidMount: function() {
+		this.startPlaying();
 	},
 	toggleCellStatus: function(x, y) {
 		var board = this.state.board;
@@ -104,7 +107,22 @@ var GameBoard = React.createClass({
 		return nextBoard;
 	},
 	updateBoard: function() {
-		this.setState({board: this.getNextBoard(this.state.board, this.getLivingNeighbors(this.state.board))})
+		function checkIfSame(oldBoard, newBoard) {
+			for(var i = 0; i < oldBoard.length; i++) {
+				for(var j = 0; j < oldBoard[i].length; j++) {
+					if(oldBoard[i][j] !== newBoard[i][j]) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		this.setState({oldBoard: this.state.board});
+		this.setState({board: this.getNextBoard(this.state.board, this.getLivingNeighbors(this.state.board))});
+		this.setState({generation: ++this.state.generation});
+		if(checkIfSame(this.state.oldBoard, this.state.board)) {
+			clearInterval(this.state.stepInterval);
+		}
 	},
 	makeEmptyArray: function(H, W) {
 		var arr = [];
@@ -120,7 +138,8 @@ var GameBoard = React.createClass({
 		return arr;
 	},
 	clearBoard: function() {
-		this.setState({board: this.makeEmptyArray(10, 10)})
+		this.setState({board: this.makeEmptyArray(10, 10)});
+		this.setState({generation: 0});
 	},
 	makeRandomArray: function (H, W) {
 		var arr = [];
@@ -137,6 +156,14 @@ var GameBoard = React.createClass({
 	},
 	randomizeBoard: function() {
 		this.setState({board: this.makeRandomArray(10, 10)})
+		this.setState({generation: 0});
+	},
+	startPlaying: function() {
+		var stepInterval = window.setInterval(this.updateBoard, 100);
+		this.setState({stepInterval: stepInterval});
+	},
+	stopPlaying: function() {
+		clearInterval(this.state.stepInterval);
 	},
 	render: function() {
 		return (
@@ -157,6 +184,9 @@ var GameBoard = React.createClass({
 				<div onClick={this.randomizeBoard} className='button'>Randomize</div>
 				<div onClick={this.clearBoard} className='button'>Clear</div>
 				<div onClick={this.updateBoard} className='button'>Next</div>
+				<div onClick={this.startPlaying} className='button'>Start</div>
+				<div onClick={this.stopPlaying} className='button'>Stop</div>
+				<div className='generation'>Generation: {this.state.generation}</div>
 			</div>
 		)
 	}
